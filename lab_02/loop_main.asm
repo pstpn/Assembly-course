@@ -16,7 +16,11 @@ PrintMsg:
     mov DS, AX                  ; установка DS
     mov DX, OFFSET HelloMessage ; передача адреса строки
     mov AH, 9                   ; АН=09h выдать на дисплей строку
+    mov CX, 3                   ; установка счетчика цикла
+dispMsg:
     int 21h                     ; вызов функции DOS
+    loop dispMsg                ; цикл вывода сообщения
+    
     mov AH, 7                   ; АН=07h ввести символ без эха
     int 21h                     ; вызов функции DOS
     mov AH, 4Ch                 ; АН=4Ch завершить процесс
