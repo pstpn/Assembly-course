@@ -14,7 +14,7 @@ PrintHexNumber proc near
     mov DS, AX
 
     mov AL, second_number
-    add AL, 17
+    add AL, 11h
 
     mov AH, 9h
     mov DX, OFFSET OUTPUT_MSG
@@ -22,6 +22,12 @@ PrintHexNumber proc near
 
     mov AH, 2h
     mov DL, AL
+    int 21h
+
+    mov DX, 10
+    int 21h
+
+    mov DX, 13
     int 21h
 
     ret
