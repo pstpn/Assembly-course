@@ -6,7 +6,7 @@ EXTRN n: byte
 EXTRN m: byte
 
 CSEG SEGMENT PARA PUBLIC 'CODE'
-    assume CS:CSEG, DS:DSEG
+    assume CS:CSEG
 replace proc near
     find_num_and_replace:
         ; Инициализация счетчика для цикла по строкам
@@ -17,7 +17,7 @@ replace proc near
         ; Цикл по строкам
         for_i_less_n:
             push CX
-            
+
             ; Инициализация счетчика для цикла по столбцам
             mov SI, 0
             mov CL, m
