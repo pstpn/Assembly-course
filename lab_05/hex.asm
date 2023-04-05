@@ -43,7 +43,9 @@ get_signed_hex_num proc near
             rol BX, 1
             mov AX, BX
             and AX, 01h
+            mov DX, CX
             push CX
+            mov CX, DX
             dec CX
             
             accum_multi:
@@ -54,19 +56,14 @@ get_signed_hex_num proc near
             pop CX
             loop get_hex_num
         
-        rol BX, 1
-        mov AX, BX
-        and AX, 01h
-        add current_dec, AX
-        add current_dec, 40
+            rol BX, 1
+            mov AX, BX
+            and AX, 01h
+            add current_dec, AX
 
-        ; push DI
-        ; mov DI, OFFSET HEX_ALPHABET
-        ; mov DX, [DI+1]
-        ; mov AH, 02h
-        ; int 21h
-
-        mov DX, OFFSET current_dec
+        push DI
+        mov DI, OFFSET HEX_ALPHABET
+        mov DX, [DI+current_dec]
         mov AH, 02h
         int 21h
 
