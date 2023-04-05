@@ -17,6 +17,7 @@
 ; заменить его значением элемента, чей индекс в
 ; строке равен старому значению
 
+
 EXTRN input: near
 EXTRN replace: near
 EXTRN output: near
@@ -25,6 +26,7 @@ PUBLIC MAX_N_M_VALUES
 PUBLIC matrix
 PUBLIC n
 PUBLIC m
+
 
 ; Создание сегмента стека
 StackSEG SEGMENT PARA STACK 'STACK'
