@@ -2,6 +2,7 @@ PUBLIC print_menu
 PUBLIC read_action
 PUBLIC read_num
 PUBLIC crlf
+PUBLIC print_minus
 EXTRN decimal: word
 
 
@@ -63,6 +64,13 @@ print_output_hex_msg proc near
 
     ret
 print_output_hex_msg endp
+print_minus proc near
+    mov AH, 02h
+    mov DX, '-'
+    int 21h
+
+    ret
+print_minus endp
 read_action proc near
     xor SI, SI
     mov AH, 01h

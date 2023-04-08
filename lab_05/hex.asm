@@ -2,6 +2,7 @@ PUBLIC get_signed_hex_num
 EXTRN read_num: near
 EXTRN print_output_hex_msg: near
 EXTRN print_crlf: near
+EXTRN print_minus: near
 EXTRN decimal: word
 
 
@@ -19,57 +20,40 @@ CSEG SEGMENT PARA PUBLIC 'CODE'
 get_signed_hex_num proc near
     call read_num
 
-    mov DI, 2
-    mov CX, 1
+    call print_output_hex_msg
+
+    mov CX, 4
     mov AX, decimal
     and AX, 32768
     cmp AX, 32768
-
-    je convert_to_negative
+    
+    je negative_hex
     jmp process_convert
 
-    convert_to_negative:
-        mov AX, decimal
-        not AX
-        inc AX
-        mov decimal, AX
+    negative_hex:
+        call print_minus
+        ; TODO
+        ; and decimal, 
     process_convert:
-        push CX
-        mov CX, 3
-        mov BX, decimal
         mov current_dec, 0
 
-        get_hex_num:
-            rol BX, 1
-            mov AX, BX
-            and AX, 01h
-            mov DX, CX
-            push CX
-            mov CX, DX
-            dec CX
-            
-            accum_multi:
-                mul DI
-                loop accum_multi
-
-            add current_dec, AX
-            pop CX
-            loop get_hex_num
+        push CX
+        mov CL, 100b
+        rol decimal, CL
+        mov AX, decimal
+        and AX, 1111b
+        add current_dec, AX
         
-            rol BX, 1
-            mov AX, BX
-            and AX, 01h
-            add current_dec, AX
-
-        push DI
         mov DI, OFFSET HEX_ALPHABET
-        mov DX, [DI+current_dec]
+        add DI, current_dec
+        mov DX, [DI]
         mov AH, 02h
         int 21h
 
-        pop DI
         pop CX
         loop process_convert
+
+    call print_crlf
 
     ret
 get_signed_hex_num endp
