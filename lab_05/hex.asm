@@ -22,6 +22,7 @@ get_signed_hex_num proc near
 
     call print_output_hex_msg
 
+    xor DX, DX
     mov CX, 4
     mov AX, decimal
     and AX, 32768
@@ -31,9 +32,8 @@ get_signed_hex_num proc near
     jmp process_convert
 
     negative_hex:
-        call print_minus
-        ; TODO
-        ; and decimal, 
+        not decimal
+        add decimal, 1
     process_convert:
         mov current_dec, 0
 
@@ -46,7 +46,7 @@ get_signed_hex_num proc near
         
         mov DI, OFFSET HEX_ALPHABET
         add DI, current_dec
-        mov DX, [DI]
+        mov DL, [DI]
         mov AH, 02h
         int 21h
 

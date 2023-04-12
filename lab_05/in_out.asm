@@ -114,15 +114,20 @@ string_num_to_word proc near
     while_cx:
         mov BL, [SI]
         inc SI
+        CMP BL, 10
+
+        je exit
+
         sub BL, 30h
 
         mov AX, decimal
         mul DI
-        xor BH, BH
         add AX, BX
         mov decimal, AX
 
         loop while_cx
+        
+        exit:
 
     ret
 string_num_to_word endp

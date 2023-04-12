@@ -12,6 +12,7 @@
 ; 1-е выводимое число: беззнаковое в 2 с/с
 ; 2-е выводимое число: знаковое в 16 с/с
 
+
 PUBLIC decimal
 EXTRN read_action: near
 EXTRN read_num: near
