@@ -2,71 +2,75 @@
 .186
 
 CSEG SEGMENT PARA PUBLIC 'CODE'
-    assume CS:CSEG, DS:CSEG
+    assume CS:CSEG
     org 100h
 main:
-    jmp INIT
+    jmp INIT                                     ; Инициализация
 
-    OLD_INTER dd 0
-    SPEED db 01Fh
-    UNINSTALL_FLAG db 31h
+    CURRENT_TIME db 0                            ; Текущее время
+    OLD_INTER dd 0                               ; Старый обработчик
+    SPEED db 01Fh                                ; Минимальная скорость (11111b)
+    UNINSTALL_FLAG db 31h                        ; Флаг для завершения программы
 INTER:
-    pusha
+    pusha                                        ; Сохранение всех регистров с стек
 
-    mov AL, 0F3h
-    out 60h, AL
-    mov AL, SPEED
-    out 60h, AL
-    dec SPEED
-    int 21h
+    mov AH, 02h                                  ; Вывод символа
+    int 1Ah                                      ; Получаем текущее время функцией BIOS
 
-    cmp SPEED, 0h
-    je reset
-    jmp exit
+    cmp DH, CURRENT_TIME                         ; Сравнение текущего времени с сохраненным
+    mov CURRENT_TIME, DH                         ; Сохранение текущего времени
+    je exit                                      ; Если секунда не прошла, то скорость не увеличивается
+
+    mov AL, 0F3h                                 ; 0F3h - Параметры режима автоповтора
+    out 60h, AL                                  ; 60h - порт клавиатуры
+    mov AL, SPEED                                ; Запоминаем новую сткорость
+    out 60h, AL                                  ; Задаем новую сткорость
+    dec SPEED                                    ; Увеличиваем скорость
+
+    cmp SPEED, 0h                                ; Сравнение текущей скорости с максимальной
+    je reset                                     ; Если она равна максимальной, то сбрасываем
+    jmp exit                                     ; Иначе выходим
 
     reset:
-        mov SPEED, 01Fh
+        mov SPEED, 01Fh                          ; Сброс скорости
     exit:
-        popa
+        popa                                     ; Возврат регистров из стека
 
-        jmp CS:OLD_INTER
+        jmp OLD_INTER                            ; Передача управления предыдущему обработчику
 INIT:
-    mov AX, 3508h
-    int 21h
+    mov AX, 3508h                                ; В AH помещаем команду 35, которая запоминает старый обработчик
+    int 21h                                      ; В AL помещаем 08, чтобы модифицировать ее (ввод символа без эха)
 
-    cmp ES:UNINSTALL_FLAG, 31h
-    je UNINSTALL
-    jmp INSTALL
+    cmp ES:UNINSTALL_FLAG, 31h                   ; Проверка на запуск программы или завершение
+    je UNINSTALL                                 ; Если завершения
+    jmp INSTALL                                  ; Если запуск
 INSTALL:
-    mov word ptr OLD_INTER, BX
-    mov word ptr OLD_INTER + 2, ES
+    mov word ptr OLD_INTER, BX                   ; Сохранение старого обработчика
+    mov word ptr OLD_INTER + 2, ES               ; Сохранение старого обработчика
 
-    mov AX, 2508h
-    mov DX, OFFSET INTER
-    int 21h
+    mov AX, 2508h                                ; В AH помещаем команду 25, которая устанавливает новый обработчик
+    mov DX, OFFSET INTER                         ; Заменяем старый обработчик новым (откуда будет выполняться резидентная программа)
+    int 21h                                      ; Прерывание
 
-    mov DX, OFFSET INIT
-    int 27h
+    mov DX, OFFSET INIT                          ; Сохранение конца резидентной программы (удаление программы после этой метки)
+    int 27h                                      ; Делаем новый обработчик резидентным
 UNINSTALL:
-    pusha
+    pusha                                        ; Сохранение всех регистров с стек
 
-    mov DX, word ptr ES:OLD_INTER
-	mov DS, word ptr ES:OLD_INTER + 2
+    mov DX, word ptr ES:OLD_INTER                ; Кладем в DX старый обработчик
+	mov DS, word ptr ES:OLD_INTER + 2            ; Кладем в DX старый обработчик
 
-    mov AX, 2508h
-    int 21h
+    mov AX, 2508h                                ; В AH помещаем команду 25, которая устанавливает новый обработчик (старый)
+    int 21h                                      ; Прерывание
 
-    mov AL, 0F3h
-    out 60h, AL
-    mov AL, 0h
-    out 60h, AL
+    mov AL, 0F3h                                 ; 0F3h - Параметры режима автоповтора
+    out 60h, AL                                  ; 60h - порт клавиатуры
+    mov AL, 0h                                   ; В AL сохраняем значение скорости автоповтора по умолчанию
+    out 60h, AL                                  ; Ставим значение по умолчанию
 
-    popa
+    popa                                         ; Возврат регистров из стека
 
-    mov AH, 49h
-    int 21h
-
-    mov AH, 4Ch
-    int 21h
+    mov AH, 4Ch                                  ; Команда завершения программы
+    int 21h                                      ; Прерывание для выхода
 CSEG ENDS
 END main
