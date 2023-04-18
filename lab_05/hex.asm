@@ -34,6 +34,7 @@ get_signed_hex_num proc near
     negative_hex:
         not decimal
         add decimal, 1
+        or decimal, 32768
     process_convert:
         mov current_dec, 0
 
