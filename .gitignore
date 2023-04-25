@@ -8,4 +8,7 @@ Debug/
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+*.sln
 
+# Jetbrains files and folders
+.idea/
