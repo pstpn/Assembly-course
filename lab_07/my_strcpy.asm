@@ -5,10 +5,13 @@ PUBLIC myStrcpy
 .STACK
 .CODE
 
-myStrcpy proc
-	mov EDI, EDX
-	mov ESI, ECX
-	mov ECX, EAX
+myStrcpy proc dst:dword, src:dword, len:dword
+	pushf
+
+	mov ESI, src
+	mov EDI, dst
+	mov ECX, len
+	mov byte ptr [ESI + ECX], 0
 	inc ECX
 
 	cmp EDI, ESI
@@ -27,6 +30,7 @@ myStrcpy proc
 		cld
 
 	exit:
+		popf
 		ret
 myStrcpy endp
 END

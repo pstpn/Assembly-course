@@ -51,16 +51,19 @@ int main()
     delete[] str_1;
     free(str_2);
 
-    char dst_1[MAX_LEN];
-    char* dst_2 = str_3 + 4;
-
 
     cout << endl << "===================myStrcpy===================" << endl << endl;
 
     size_t len = myStrlen(str_3);
     char s_str_3[MAX_LEN] = "I really like assembler!!";
-    myStrcpy(str_3, str_3, len);
+    char s_str_4[MAX_LEN] = "really like assembler!!";
+    char dst_1[MAX_LEN];
+    char* dst_2 = str_3 + 4;
+    char* dst_3 = s_str_3;
+    char dst_4[MAX_LEN];
 
+
+    myStrcpy(str_3, str_3, len);
     cout << "[Test 1]: Copying identical strings : " << 
         ((len == strlen(str_3) && (strcmp(str_3, s_str_3) == 0)) ? "PASSED" : "FAILED") << endl;
 
@@ -70,8 +73,16 @@ int main()
         ((strlen(dst_1) == strlen(str_3) && (strcmp(str_3, dst_1) == 0)) ? "PASSED" : "FAILED") << endl;
 
     myStrcpy(dst_2, str_3, strlen(str_3));
-    cout << "[Test 3]: Address overlay: " <<
+    cout << "[Test 3]: Address overlay (end copy): " <<
         ((strlen(dst_2) == strlen(s_str_3) && (strcmp(s_str_3, dst_2) == 0)) ? "PASSED" : "FAILED") << endl;
+
+    myStrcpy(dst_3, s_str_3 + 2, strlen(s_str_3 + 2));
+    cout << "[Test 4]: Address overlay (begin copy): " <<
+        ((strlen(dst_3) == strlen(s_str_4) && (strcmp(s_str_4, dst_3) == 0)) ? "PASSED" : "FAILED") << endl;
+
+    myStrcpy(dst_4, dst_3, 3);
+    cout << "[Test 5]: String part copy: " <<
+        ((strlen(dst_4) == 3) ? "PASSED" : "FAILED") << endl;
 
     cout << endl << "==============================================" << endl << endl;
 
