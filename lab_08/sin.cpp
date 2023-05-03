@@ -25,9 +25,9 @@ double assemblyHalfSin() {
     double ans;
 
     __asm__(
-        "fld %1\n"
         "fldpi\n"
-        "fdiv %%ST(0), %%ST(1)\n"
+        "fld %1\n"
+        "fdivp %%ST(1), %%ST(0)\n"
         "fsin\n"
         "fstp %0\n"
         : "=m"(ans)
