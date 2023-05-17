@@ -48,7 +48,7 @@ btnID equ 1
 main:
     ; Получение Handlera для программы
     invoke GetModuleHandle, NULL
-    mov hinstance, eax 
+    mov hinstance, eax
     ; Получение адреса cmd
     invoke GetCommandLine
     mov cmd, eax
@@ -144,7 +144,7 @@ process proc hwnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
     mov field2, eax
     ; Установить первое поле в фокус (с курсором внутри)
     invoke SetFocus, field1
-    ; СОздание кнопки получения результата
+    ; Создание кнопки получения результата
     invoke CreateWindowEx, NULL, addr btnName, addr btnText,\
         WS_CHILD or WS_VISIBLE or BS_DEFPUSHBUTTON,
         100, 100, 160, 30, hwnd, btnID, hinstance, NULL
@@ -154,38 +154,32 @@ process proc hwnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 .ELSEIF uMsg == WM_COMMAND
     ; Сохранение комманды (идентификатора)
     mov eax, wParam
-    ; Если текущий идентификатор - кнопочный
+    ; Если текущий идентификатор - кнопка получения результата
     .IF ax == btnID
         shr eax, 16
             .IF ax == BN_CLICKED
             push edi
             push ebx
 
-; Получения первой цифры
+; Получение первой цифры
 getFirstNum:
             invoke GetWindowText, field1, addr buf, 2
             xor edi, edi
             xor eax, eax
             xor ebx, ebx
-            mov cx, 10
             mov bl, byte ptr buf[edi]
             sub bl, '0'
-            mul cx
             add eax, ebx
             push eax
 
-; Получения второй цифры
+; Получение второй цифры
 getSecondNum:
             invoke GetWindowText, field2, addr buf, 2
             xor edi, edi
-            xor eax, eax
             xor ebx, ebx
-            mov cx, 10
             mov bl, byte ptr buf[edi]
             sub bl, '0'
-            mul cx
-            add eax, ebx
-            pop ebx
+            pop eax
             add eax, ebx
 
 ; Вывод результата сложения
@@ -198,7 +192,7 @@ printResult:
             .ENDIF
     .ENDIF
 
-; Обработчка по умолчанию
+; Обработчик по умолчанию
 .ELSE
     invoke DefWindowProc, hwnd, uMsg, wParam, lParam
     ret
